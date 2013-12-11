@@ -6,6 +6,9 @@ for Solid Edge (Solid_Edge_API_tcm78-125829.pdf)
 
 Freeware. For educational purposes only, use it at your own risk.
 
+You can read a brief tutorial at
+http://www.arleedesign.com/Services/IronPythonForSETutorial.html
+
 The program requires Interop.SolidEdge.dll to be copied in its
 folder. The DLL is part of Jason Hewell's project and can be
 downloaded from http://solidedgeinterop.codeplex.com/
