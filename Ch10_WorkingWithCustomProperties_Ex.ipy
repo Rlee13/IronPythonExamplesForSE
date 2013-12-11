@@ -2,14 +2,14 @@
 # Ch10_WorkingWithCustomProperties_Ex.ipy v.0.1
 # The original examples writen in VB.NET and C# can be found in
 # Solid Edge Programmer's Guide or in .NET Programmer's Guide
-# for Solid Edge (Solid_Edge_API_tcm78-125829.pdf)
+# for Solid Edge (Solid_Edge_API_tcm78-125829.pdf).
 #
 # Author: Rlee13
 # This file is part of IronPython Examples for Solid Edge ST6.
 # An up to date version of the software is to be found at:
-# https://github.com/Rlee13/pyPLY/
+# https://github.com/Rlee13/
 #
-# Freeware. For educational purposes only, use it on your own risk.
+# Freeware. For educational purposes only, use it at your own risk.
 #
 # The program requires Interop.SolidEdge.dll to be copied in its
 # folder. The DLL is part of Jason Hewell's project and can be
