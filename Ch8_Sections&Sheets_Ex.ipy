@@ -1,0 +1,114 @@
+#
+# Ch8_Sections&Sheets_Ex.ipy v.0.1
+# The original examples writen in VB.NET and C# can be found in
+# Solid Edge Programmer's Guide or in .NET Programmer's Guide
+# for Solid Edge (Solid_Edge_API_tcm78-125829.pdf)
+#
+# Author: Rlee13
+# This file is part of IronPython Examples for Solid Edge ST6.
+# An up to date version of the software is to be found at:
+# https://github.com/Rlee13/pyPLY/
+#
+# Freeware. For educational purposes only, use it on your own risk.
+#
+# The program requires Interop.SolidEdge.dll to be copied in its
+# folder. The DLL is part of Jason Hewell's project and can be
+# downloaded from http://solidedgeinterop.codeplex.com/
+# Tested with IronPython 2.7.4 on .NET 4.0 and Solid Edge ST6.
+#
+# The file has the extension .ipy which is a personal preference,
+# feel free to changed it to any other extension.
+# Simply run:
+#   ipy.exe filename.ipy
+#
+# History:
+# 11.12.13 - Ch8_Sections&Sheets_Ex.ipy v.0.1
+#
+import clr
+clr.AddReference("Interop.SolidEdge")
+clr.AddReference("System.Runtime.InteropServices")
+
+import SolidEdgeDraft as SEDraft
+import System.Runtime.InteropServices as SRI
+# It is not really required one can use 'print'
+from System import Console
+
+objApplication  = None
+objDocuments = None
+objDraft = None
+objSections  = None
+objSection = None
+objSectionSheets = None
+#
+objSheets = None
+objSheet = None
+strFormat1 = "Section = %s"
+strFormat2 = "Sheet = %s"
+
+try:
+    # Connect to a running instance of Solid Edge
+    objApplication = SRI.Marshal.GetActiveObject("SolidEdge.Application")
+    # Get a reference to the documents collection
+    objDocuments = objApplication.Documents
+    # Add a Draft document
+    objDraft = objDocuments.Add("SolidEdge.DraftDocument")
+    # Get a reference to the sections collection
+    objSections = objDraft.Sections
+    # Loop through the sections
+    # igWorkingSection, igBackgroundSection & ig2dModelSection
+    for objSection in objSections:
+        # Output the section type
+        Console.WriteLine(strFormat1 % objSection.Type)
+        # Get a reference to the section sheets collection
+        objSectionSheets = objSection.Sheets
+        # Loop through the sheets
+        for objSheet in objSectionSheets:
+            # Output the sheet name
+            # print dir(objSheet)
+            print (strFormat2 % objSheet.Name)
+
+    # Access the igWorkingSection directly
+    objSection = objSections.WorkingSection
+    # Access the igBackgroundSection directly
+    objSection = objSections.BackgroundSection
+    # Get a reference to the sheets collection
+    objSheets = objDraft.Sheets
+    # Add a new sheet
+    objSheet = objSheets.AddSheet("Sheet2", SEDraft.SheetSectionTypeConstants.igWorkingSection)
+    # Make the newly added sheet active
+    objSheet.Activate()
+except Exception, ex:
+    Console.WriteLine(ex)
+finally:
+    if objSheet is not None:
+        SRI.Marshal.ReleaseComObject(objSheet)
+        objSheet = None
+
+    if objSheets is not None:
+        SRI.Marshal.ReleaseComObject(objSheets)
+        objSheets = None
+
+    if objSectionSheets is not None:
+        SRI.Marshal.ReleaseComObject(objSectionSheets)
+        objSectionSheets = None
+
+    if objSection is not None:
+        SRI.Marshal.ReleaseComObject(objSection)
+        objSection = None
+
+    if objSections is not None:
+        SRI.Marshal.ReleaseComObject(objSections)
+        objSections = None
+
+    if objDraft is not None:
+        SRI.Marshal.ReleaseComObject(objDraft)
+        objDraft = None
+
+    if objDocuments is not None:
+        SRI.Marshal.ReleaseComObject(objDocuments)
+        objDocuments = None
+
+#    print objApplication
+    if objApplication is not None:
+        SRI.Marshal.ReleaseComObject(objApplication)
+        objApplication = None

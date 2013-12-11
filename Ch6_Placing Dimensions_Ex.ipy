@@ -1,0 +1,184 @@
+#
+# Ch6_PlacingDimensions_Ex.ipy v.0.1
+# The original examples writen in VB.NET and C# can be found in
+# Solid Edge Programmer's Guide or in .NET Programmer's Guide
+# for Solid Edge (Solid_Edge_API_tcm78-125829.pdf)
+#
+# Author: Rlee13
+# This file is part of IronPython Examples for Solid Edge ST6.
+# An up to date version of the software is to be found at:
+# https://github.com/Rlee13/pyPLY/
+#
+# Freeware. For educational purposes only, use it on your own risk.
+#
+# The program requires Interop.SolidEdge.dll to be copied in its
+# folder. The DLL is part of Jason Hewell's project and can be
+# downloaded from http://solidedgeinterop.codeplex.com/
+# Tested with IronPython 2.7.4 on .NET 4.0 and Solid Edge ST6.
+#
+# The file has the extension .ipy which is a personal preference,
+# feel free to changed it to any other extension.
+# Simply run:
+#   ipy.exe filename.ipy
+#
+# History:
+# 11.12.13 - Ch6_PlacingDimensions_Ex.ipy v.0.1
+#
+import clr
+clr.AddReference("Interop.SolidEdge")
+clr.AddReference("System.Runtime.InteropServices")
+
+import SolidEdgeDraft as SEDraft
+import SolidEdgeFramework as SEFramework
+import SolidEdgeConstants as SEConstants
+import SolidEdgePart as SEPart
+import System.Runtime.InteropServices as SRI
+# Console it is not really required as one can use "print"
+from System import Console
+
+objApplication = None
+objDocuments = None
+objPart = None
+objProfileSets = None
+objProfileSet = None
+objProfiles = None
+objProfile = None
+objRefPlanes = None
+objRefPlane = None
+objLines2d = None
+aLine2d = []
+objRelations2d = None
+objDimensions = None
+objDimension = None
+objDimStyle = None
+
+try:
+    # Connect to a running instance of Solid Edge
+    objApplication = SRI.Marshal.GetActiveObject("SolidEdge.Application")
+    # Get a reference to the documents collection
+    objDocuments = objApplication.Documents
+    # Add a Part document
+    objPart = objDocuments.Add("SolidEdge.PartDocument")
+    # Get a reference to the ref planes collection
+    objRefPlanes = objPart.RefPlanes
+    # Get a reference to the first reference plane
+    objRefPlane = objRefPlanes.Item(1)
+    # Get a reference to the profile sets collection
+    objProfileSets = objPart.ProfileSets
+    # Add a new profile set
+    objProfileSet = objProfileSets.Add()
+    # Get a reference to the profiles collection
+    objProfiles = objProfileSet.Profiles
+    # Add a new profile on the selected reference plane
+    objProfile = objProfiles.Add(objRefPlane)
+    # Get a reference to the lines 2d collection
+    objLines2d = objProfile.Lines2d
+    # Get a reference to the relations 2d collection
+    objRelations2d = objProfile.Relations2d
+    # Get a reference to the dimensions collection
+    objDimensions = objProfile.Dimensions
+    # Draw the geometry.
+    aLine2d.append(objLines2d.AddBy2Points(0, 0, 0.1, 0))
+    aLine2d.append(objLines2d.AddBy2Points(0.1, 0, 0.1, 0.1))
+    aLine2d.append(objLines2d.AddBy2Points(0.1, 0.1, 0, 0.05))
+    aLine2d.append(objLines2d.AddBy2Points(0, 0.05, 0, 0))
+    # Add endpoint relationships between the lines
+    objRelations2d.AddKeypoint(
+        aLine2d[0],
+        SEConstants.KeypointIndexConstants.igLineEnd,
+        aLine2d[1],
+        SEConstants.KeypointIndexConstants.igLineStart)
+    objRelations2d.AddKeypoint(
+        aLine2d[1],
+        SEConstants.KeypointIndexConstants.igLineEnd,
+        aLine2d[2],
+        SEConstants.KeypointIndexConstants.igLineStart)
+    objRelations2d.AddKeypoint(
+        aLine2d[2],
+        SEConstants.KeypointIndexConstants.igLineEnd,
+        aLine2d[3],
+        SEConstants.KeypointIndexConstants.igLineStart)
+    objRelations2d.AddKeypoint(
+        aLine2d[3],
+        SEConstants.KeypointIndexConstants.igLineEnd,
+        aLine2d[0],
+        SEConstants.KeypointIndexConstants.igLineStart)
+    # Add dimensions, and change the dimension units to meters
+    objDimension = objDimensions.AddLength(aLine2d[1])
+    objDimension.Constraint = True
+    objDimStyle = objDimension.Style
+    objDimStyle.PrimaryUnits = SEConstants.DimLinearUnitConstants.igDimStyleLinearMeters
+    objDimension = objDimensions.AddLength(aLine2d[3])
+    objDimension.Constraint = True
+    objDimStyle = objDimension.Style
+    objDimStyle.PrimaryUnits = SEConstants.DimLinearUnitConstants.igDimStyleLinearMeters
+    objDimension = objDimensions.AddDistanceBetweenObjects(
+        aLine2d[1], 0.1, 0.1, 0, False,
+        aLine2d[2], 0, 0.05, 0, False)
+    objDimension.Constraint = True
+    objDimStyle = objDimension.Style
+    objDimStyle.PrimaryUnits = SEConstants.DimLinearUnitConstants.igDimStyleLinearMeters
+
+except Exception, ex:
+    Console.WriteLine(ex)
+finally:
+    for i in range(len(aLine2d) - 1):
+        if aLine2d[i] is not None:
+            SRI.Marshal.ReleaseComObject(aLine2d[i])
+            aLine2d[i] = None
+
+    if objDimStyle is not None:
+        SRI.Marshal.ReleaseComObject(objDimStyle)
+        objDimStyle = None
+
+    if objDimension is not None:
+        SRI.Marshal.ReleaseComObject(objDimension)
+        objDimension = None
+
+    if objDimensions is not None:
+        SRI.Marshal.ReleaseComObject(objDimensions)
+        objDimensions = None
+
+    if objRelations2d is not None:
+        SRI.Marshal.ReleaseComObject(objRelations2d)
+        objRelations2d = None
+
+    if objLines2d is not None:
+        SRI.Marshal.ReleaseComObject(objLines2d)
+        objLines2d = None
+
+    if objRefPlane is not None:
+        SRI.Marshal.ReleaseComObject(objRefPlane)
+        objRefPlane = None
+
+    if objRefPlanes is not None:
+        SRI.Marshal.ReleaseComObject(objRefPlanes)
+        objRefPlanes = None
+
+    if objProfile is not None:
+        SRI.Marshal.ReleaseComObject(objProfile)
+        objProfile = None
+
+    if objProfiles is not None:
+        SRI.Marshal.ReleaseComObject(objProfiles)
+        objProfiles = None
+
+    if objProfileSet is not None:
+        SRI.Marshal.ReleaseComObject(objProfileSet)
+        objProfileSet = None
+
+    if objProfileSets is not None:
+        SRI.Marshal.ReleaseComObject(objProfileSets)
+        objProfileSets = None
+
+    if objPart is not None:
+        SRI.Marshal.ReleaseComObject(objPart)
+        objPart = None
+
+    if objDocuments is not None:
+        SRI.Marshal.ReleaseComObject(objDocuments)
+        objDocuments = None
+
+    if objApplication is not None:
+        SRI.Marshal.ReleaseComObject(objApplication)
+        objApplication = None

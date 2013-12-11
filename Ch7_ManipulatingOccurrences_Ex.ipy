@@ -1,0 +1,93 @@
+#
+# Ch7_ManipulatingOccurrences_Ex.ipy v.0.1
+# The original examples writen in VB.NET and C# can be found in
+# Solid Edge Programmer's Guide or in .NET Programmer's Guide
+# for Solid Edge (Solid_Edge_API_tcm78-125829.pdf)
+#
+# Author: Rlee13
+# This file is part of IronPython Examples for Solid Edge ST6.
+# An up to date version of the software is to be found at:
+# https://github.com/Rlee13/pyPLY/
+#
+# Freeware. For educational purposes only, use it on your own risk.
+#
+# The program requires Interop.SolidEdge.dll to be copied in its
+# folder. The DLL is part of Jason Hewell's project and can be
+# downloaded from http://solidedgeinterop.codeplex.com/
+# Tested with IronPython 2.7.4 on .NET 4.0 and Solid Edge ST6.
+#
+# The file has the extension .ipy which is a personal preference,
+# feel free to changed it to any other extension.
+# Simply run:
+#   ipy.exe filename.ipy
+#
+# History:
+# 11.12.13 - Ch7_ManipulatingOccurrences_Ex.ipy v.0.1
+#
+
+import clr
+clr.AddReference("Interop.SolidEdge")
+clr.AddReference("System.Runtime.InteropServices")
+
+import SolidEdgeDraft as SEDraft
+import SolidEdgeFramework as SEFramework
+import SolidEdgeConstants as SEConstants
+import SolidEdgePart as SEPart
+import System.Runtime.InteropServices as SRI
+# Console it is not really required as one can use "print"
+from System import Console
+import math
+
+try:
+    # Connect to a running instance of Solid Edge
+    objApplication = SRI.Marshal.GetActiveObject("SolidEdge.Application")
+    # Get a reference to the documents collection
+    objDocuments = objApplication.Documents
+    # Create a new assembly document
+    objAssembly = objDocuments.Add("SolidEdge.AssemblyDocument")
+    # Get a reference to the occurrences collection
+    objOccurrences = objAssembly.Occurrences
+    # Add the first block to the assembly
+    objOccurrence1 = objOccurrences.AddByFilename("C:\Part1.par")
+    # Add the second block to the assembly
+    objOccurrence2 = objOccurrences.AddByFilename("C:\Part1.par")
+    # It is currently in the same position and orientation as the first
+    # block, so reposition it
+    objOccurrence2.Move(0, 0, 0.05)
+    # Add the third block to the assembly
+    objOccurrence3 = objOccurrences.AddByFilename("C:\Part1.par")
+    # Rotate the third block to a vertical position.
+    objOccurrence3.Rotate(0, 0, 0, 0, 1, 0, -math.pi / 2)
+    # Reposition the third block.
+    objOccurrence3.Move(-0.049, 0, 0.049)
+    
+except Exception, ex:
+    Console.WriteLine(ex)
+finally:
+    if objOccurrence3 is not None:
+        SRI.Marshal.ReleaseComObject(objOccurrence3)
+        objOccurrence3 = None
+
+    if objOccurrence2 is not None:
+        SRI.Marshal.ReleaseComObject(objOccurrence2)
+        objOccurrence2 = None
+
+    if objOccurrence1 is not None:
+        SRI.Marshal.ReleaseComObject(objOccurrence1)
+        objOccurrence1 = None
+
+    if objOccurrences is not None:
+        SRI.Marshal.ReleaseComObject(objOccurrences)
+        objOccurrences = None
+
+    if objAssembly is not None:
+        SRI.Marshal.ReleaseComObject(objAssembly)
+        objAssembly = None
+
+    if objDocuments is not None:
+        SRI.Marshal.ReleaseComObject(objDocuments)
+        objDocuments = None
+
+    if objApplication is not None:
+        SRI.Marshal.ReleaseComObject(objApplication)
+        objApplication = None

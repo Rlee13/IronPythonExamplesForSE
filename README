@@ -1,0 +1,18 @@
+Examples of using IronPython for SolidEdge programming.
+
+The original examples writen in VB.NET and C can be found in
+Solid Edge Programmer's Guide or in .NET Programmer's Guide
+for Solid Edge (Solid_Edge_API_tcm78-125829.pdf)
+
+Freeware. For educational purposes only, use it on your own risk.
+
+The program requires Interop.SolidEdge.dll to be copied in its
+folder. The DLL is part of Jason Hewell's project and can be
+downloaded from http://solidedgeinterop.codeplex.com/
+Tested with IronPython 2.7.4 on .NET 4.0 and Solid Edge ST6.
+
+The files have the extension .ipy (a personal preference),
+feel free to changed it to any other extension.
+Simply run:
+  ipy.exe filename.ipy
+

@@ -1,0 +1,119 @@
+#
+# Ch7_CreatingReferenceElements_Ex.ipy.ipy v.0.1
+# The original examples writen in VB.NET and C# can be found in
+# Solid Edge Programmer's Guide or in .NET Programmer's Guide
+# for Solid Edge (Solid_Edge_API_tcm78-125829.pdf)
+#
+# Author: Rlee13
+# This file is part of IronPython Examples for Solid Edge ST6.
+# An up to date version of the software is to be found at:
+# https://github.com/Rlee13/pyPLY/
+#
+# Freeware. For educational purposes only, use it on your own risk.
+#
+# The program requires Interop.SolidEdge.dll to be copied in its
+# folder. The DLL is part of Jason Hewell's project and can be
+# downloaded from http://solidedgeinterop.codeplex.com/
+# Tested with IronPython 2.7.4 on .NET 4.0 and Solid Edge ST6.
+#
+# The file has the extension .ipy which is a personal preference,
+# feel free to changed it to any other extension.
+# Simply run:
+#   ipy.exe filename.ipy
+#
+# History:
+# 11.12.13 - Ch7_CreatingReferenceElements_Ex.ipy v.0.1
+#
+
+import clr
+clr.AddReference("Interop.SolidEdge")
+clr.AddReference("System.Runtime.InteropServices")
+
+import SolidEdgeDraft as SEDraft
+import SolidEdgeFramework as SEFramework
+import SolidEdgeConstants as SEConstants
+import SolidEdgePart as SEPart
+import System.Runtime.InteropServices as SRI
+# Console it is not really required as one can use "print"
+from System import Console
+import math
+
+objApplication = None
+objDocuments = None
+objAssembly = None
+objAsmRefPlanes = None
+objAsmRefPlane = None
+objPPlane = None
+objPart = None
+objRefPlanes = None
+objRefPlane = None
+
+try:
+    # Connect to a running instance of Solid Edge
+    objApplication = SRI.Marshal.GetActiveObject("SolidEdge.Application")
+    # Access the Documents collection object
+    objDocuments = objApplication.Documents
+    # Add an Assembly document
+    objAssembly = objDocuments.Add("SolidEdge.AssemblyDocument")
+    # Access the AsmRefPlanes collection object
+    objAsmRefPlanes = objAssembly.AsmRefPlanes
+    # Create a reference plane at an angle to a
+    # principal reference plane
+    objPPlane = objAsmRefPlanes.Item(2)
+    # Add a new reference plane
+    objAsmRefPlane = objAsmRefPlanes.AddAngularByAngle(
+                    objPPlane,  
+                    (2 * math.pi / 3),
+                    objAsmRefPlanes.Item(1),
+                    SEConstants.ReferenceElementConstants.igPivotEnd,
+                    SEConstants.ReferenceElementConstants.igNormalSide,
+                    True)
+    objAsmRefPlane.Name = "NewPlaneName"
+    # Add a Part document
+    objPart = objDocuments.Add("SolidEdge.PartDocument")
+    # Access the RefPlanes collection object
+    objRefPlanes = objPart.RefPlanes
+    # Create a global reference plane parallel to the top reference plane
+    objRefPlane = objRefPlanes.AddParallelByDistance(
+                objRefPlanes.Item(1),
+                0.1,
+                SEConstants.ReferenceElementConstants.igNormalSide,
+                False)
+except Exception, ex:
+    Console.WriteLine(ex)
+finally:
+    if objRefPlane is not None:
+        SRI.Marshal.ReleaseComObject(objRefPlane)
+        objRefPlane = None
+
+    if objRefPlanes is not None:
+        SRI.Marshal.ReleaseComObject(objRefPlanes)
+        objRefPlanes = None
+
+    if objPart is not None:
+        SRI.Marshal.ReleaseComObject(objPart)
+        objPart = None
+
+    if objPPlane is not None:
+        SRI.Marshal.ReleaseComObject(objPPlane)
+        objPPlane = None
+
+    if objAsmRefPlane is not None:
+        SRI.Marshal.ReleaseComObject(objAsmRefPlane)
+        objAsmRefPlane = None
+
+    if objAsmRefPlanes is not None:
+        SRI.Marshal.ReleaseComObject(objAsmRefPlanes)
+        objAsmRefPlanes = None
+
+    if objAssembly is not None:
+        SRI.Marshal.ReleaseComObject(objAssembly)
+        objAssembly = None
+
+    if objDocuments is not None:
+        SRI.Marshal.ReleaseComObject(objDocuments)
+        objDocuments = None
+
+    if objApplication is not None:
+        SRI.Marshal.ReleaseComObject(objApplication)
+        objApplication = None
